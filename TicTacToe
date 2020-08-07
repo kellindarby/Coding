@@ -91,7 +91,7 @@ void printBoard(int board[])//horribly un-optimized, want to loop through it som
 {
   for (int i = 0; i < 7; i++)//outer loop for newlines
   {
-    if( i%2 == 1 )
+    if( i%2 == 1 )//the lines with numbers, X or O
     {
       for (int j = 0; j <= 10; j++)//loop for width of board
       {
@@ -102,30 +102,29 @@ void printBoard(int board[])//horribly un-optimized, want to loop through it som
         else if( j == 3 || j == 7 )
         {
           printf("|");
-        }
-        else if(board[j] != 0)
+        }//pretty sure we good up to here
+        else if(board[j] != 0)//error times: j is not gonna be right, need other variable
         {
           if(board[j] == 1)
           {
             printf("X");
           }
-          else
+          else if(board[j] == 0)
             printf("O");
         }
-
-        else
+        else//this should be active when spot is empty
         {
-          if ( i == 1 )
+          if (i == 1)
           {
-            if( j == 1 )
+            if(j == 1)
             {
               printf("1");
             }
-            if(j == 5 )
+            if(j == 5)
             {
               printf("2");
             }
-            if(j == 9 )
+            if(j == 9)
             {
               printf("3");
             }
