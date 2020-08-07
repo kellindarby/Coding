@@ -1,0 +1,544 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>//for random comp input
+
+#define SIZE 9//for board size
+
+void printBoard(int board[]);
+int winCheck(int board[]);
+
+int main(void)//Tic Tac Toe game
+{
+  srand(time(0));//having computer choose random spaces for now, in the furte maybe i'll make it smarter
+
+  int board[9] = {0,0,0,0,0,0,0,0,0};//holds 0 for unselected board spots, 1 for user spots, X, and 2 for comp spots, O
+
+  /*
+  printf("   |   |\n"); //keeping in as reference for basic print of board
+  printf(" 1 | 2 | 3\n");
+  printf("-----------\n");
+  printf(" 4 | 5 | 6\n");
+  printf("-----------\n");
+  printf(" 7 | 8 | 9\n");
+  printf("   |   |\n");
+  */
+  
+  printBoard(board);
+
+  int choice = 0;//for user choice
+  int check = 0;//for tie game checker, and to make sure win conditions aren't chosen until at least 5th entry
+  while(1)
+  {
+    printf("\nWhere would you like to go?\n");//this is where the user goes
+    scanf(" %d", &choice);//not preventing bad input yet
+    
+    if (choice >= 1 && choice <= 9)
+    {
+      while( board[choice-1] != 0 )//can't go in a filled spot
+      {
+        printf("That space is already in use, pick again: ");
+        scanf(" %d", &choice);
+      }
+      board[choice-1]++;//sets users spot to 1 in struct
+    }
+    printBoard(board);
+    check++;
+    if(check >= 5)//won't check win cons til 5 entries
+    {
+      if(winCheck(board))
+      {
+        break;
+      }
+    }
+    if (check == 9)//if board full and no win con found
+    {
+      printf("Cat's game!\n");
+      break;
+    }
+    printf("\nNow the computer's turn...\n\n");
+
+    int compChoice = 0;
+
+    while (compChoice == 0 || board[compChoice-1] != 0)//makes comp choose a valid spot
+    { 
+      compChoice = rand() % 9 + 1;
+    }
+    board[compChoice-1] = 2;
+    check++;
+    
+    printBoard(board);
+    if(check >= 5)
+    {
+      if(winCheck(board))
+      {
+        break;
+      }
+    }
+    if (choice == 0)//default to quit out for now
+    {
+      break;
+    }
+
+  }
+
+}
+
+void printBoard(int board[])//horribly un-optimized, want to loop through it somehow
+//0,2,4,6,8 will be spaces for all rows
+//1,5,9 are X,O, or 1-9, for rows 1,3,5
+//3rd and 5th row is -------
+//3 & 7 are |, first and sixth row are just |  | 
+{
+  for (int i = 0; i < 7; i++)//outer loop for newlines
+  {
+    if( i%2 == 1 )
+    {
+      for (int j = 0; j <= 10; j++)//loop for width of board
+      {
+        if( j%2 == 0 )
+        {
+          printf(" ");
+        }
+        else if( j == 3 || j == 7 )
+        {
+          printf("|");
+        }
+        else if(board[j] != 0)
+        {
+          if(board[j] == 1)
+          {
+            printf("X");
+          }
+          else
+            printf("O");
+        }
+
+        else
+        {
+          if ( i == 1 )
+          {
+            if( j == 1 )
+            {
+              printf("1");
+            }
+            if(j == 5 )
+            {
+              printf("2");
+            }
+            if(j == 9 )
+            {
+              printf("3");
+            }
+          }
+          else if ( i == 3 )
+          {
+            if (j == 1)
+            {
+              printf("4");
+            }
+            if (j == 5)
+            {
+              printf("5");
+            }
+            if (j == 9)
+            {
+              printf("6");
+            }
+          }
+          else if ( i == 5 )
+          {
+            if(j == 1)
+            {
+              printf("7");
+            }
+            if(j == 5)
+            {
+              printf("8");
+            }
+            if(j == 9)
+            {
+              printf("9");
+            }
+            
+          }
+        }
+      }
+    }
+    else if( i == 2 || i == 4 )
+    {
+      printf("-----------");
+    }
+    else if( i == 0 || i == 6 )
+    {
+      printf("   |   |");
+    }
+
+    printf("\n");
+  }
+}
+/*
+{
+  printf("   |   |\n ");
+
+  if(board[0] == 1)
+  {
+    printf("X");
+  }
+  else if(board[0] == 2)
+  { 
+    printf("O");
+  }
+  else
+    printf("1");
+    
+  printf(" | ");
+  
+  if(board[1] == 1)
+  {
+    printf("X");
+  }
+  else if(board[1] == 2)
+  {
+    printf("O");
+  }  
+  else
+    printf("2");
+
+  printf(" | ");
+
+  if(board[2] == 1)
+  {
+    printf("X");
+  }
+  else if(board[2] == 2)
+  {
+    printf("O");
+  }    
+  else
+    printf("3");
+
+  printf("\n-----------\n ");
+
+  if(board[3] == 1)
+  {
+    printf("X");
+  }
+  else if(board[3] == 2)
+  {
+      printf("O");
+  }   
+  else
+    printf("4");
+
+  printf(" | ");
+
+  if(board[4] == 1 )
+  {
+    printf("X");
+  }
+  else if(board[4] == 2)
+  {
+    printf("O");
+  }   
+  else
+    printf("5"); 
+
+  printf(" | ");  
+
+  if(board[5] == 1)
+  {
+    printf("X");
+  }
+  else if(board[5] == 2)
+  {
+    printf("O");
+  }   
+  else
+    printf("6");
+
+  printf("\n-----------\n ");
+
+  if(board[6] == 1 )
+  {
+    printf("X");
+  }
+  else if(board[6] == 2)
+  {
+    printf("O");
+  }   
+  else
+    printf("7");
+
+  printf(" | ");
+
+  if(board[7] == 1)
+  {
+    printf("X");
+  }
+  else if(board[7] == 2)
+  {
+    printf("O");
+  }   
+  else
+    printf("8");
+
+  printf(" | ");
+
+  if(board[8] == 1)
+  {
+    printf("X");
+  }
+  else if(board[8] == 2)
+  {
+    printf("O");
+  }   
+  else
+    printf("9");
+
+  printf("\n   |   |\n");
+}*/
+
+int winCheck(int board[])//checks if user or comp wins, want to optimize it 
+{
+  if( board[0] != 0 )
+  {
+    if (board[1] != 0)
+    {
+      if (board[2] != 0)
+      {
+        if(board[0]+board[1]+board[2] == 3)
+        {
+          printf("Congrats! You win!\n");
+          return 1;
+        }
+        else if(board[0]+board[1]+board[2] == 6)
+        {
+          printf("Sorry, you lose\n");
+          return 1;
+        }
+      }
+    }
+    if (board[3] != 0)
+    {
+      if (board[6] != 0)
+      {
+        if(board[0] + board[3] + board[6] == 3)
+        {
+          printf("Congrats! You win!\n");
+          return 1;
+        }
+        else if(board[0] + board[3] + board[6] == 6)
+        {
+          printf("Sorry, you lose.\n");
+          return 1;
+        }
+      }
+    }
+    if (board[4] != 0 && board[8] != 0)
+    {
+      if(board[4] + board[8] + board[0] == 3)
+      {
+        printf("Congrats! You win!\n");
+        return 1;
+      }
+      else if(board[4] + board[8] + board[0] == 6)
+      {
+        printf("Sorry, you lose.\n");
+        return 1;
+      }
+    }
+    
+  }
+  if (board[1] != 0 && board[4] != 0 && board[7] != 0)
+  {
+    if(board[1] + board[4] + board[7] == 3)
+    {
+      printf("Congrats! You win!\n");
+      return 1;
+    }
+    else if(board[1] + board[4] + board[7] == 6)
+    {
+      printf("Sorry, you lose.\n");
+      return 1;
+    }
+  }
+  if (board[2] != 0)
+  {
+    if(board[5] != 0 && board[8] != 0)
+    {
+      if(board[2] + board[5] + board[8] == 3)
+      {
+        printf("Congrats! You win!\n");
+        return 1;
+      }
+      else if(board[2] + board[5] + board[8] == 6)
+      {
+        printf("Sorry, you lose.\n");
+        return 1;
+      }
+    }
+    if(board[4] != 0 && board[6] != 0)
+    {
+      if(board[2] + board[4] + board[6] == 3)
+      {
+        printf("Congrats! You win!\n");
+        return 1;
+      }
+      else if(board[2] + board[4] + board[6] == 6)
+      {
+        printf("Sorry, you lose.\n");
+        return 1;
+      }
+    }
+  }
+  if (board[3] != 0 && board[4] != 0 && board[5] != 0)
+  {
+    if(board[3] + board[4] + board[5] == 3)
+    {
+      printf("Congrats! You win!\n");
+      return 1;
+    }
+    else if(board[3] + board[4] + board[5] == 6)
+    {
+      printf("Sorry, you lose.\n");
+      return 1;
+    }
+  }
+  if (board[6] != 0 && board[7] != 0 && board[8] != 0)
+  {
+    if(board [6] + board[7] + board[8] == 3)
+    {
+      printf("Congrats! You win!\n");
+      return 1;
+    }
+    else if(board [6] + board[7] + board[8] == 6)
+    {
+      printf("Sorry, you lose.\n");
+      return 1;
+    }
+  }
+  return 0;
+}
+  /*keeping this more brute force checker for now, in case above has some issues
+  if( board[0] == 1)
+  {
+    if (board[1] == 1)
+    {
+      if (board[2] == 1)
+      {
+        printf("Congrats! You win!\n");
+        return 1;
+      }
+    }
+    if (board[3] == 1)
+    {
+      if (board[6] == 1)
+      {
+        printf("Congrats! You win!\n");
+        return 1;
+      }
+    }
+    if (board[4] == 1 && board[8] == 1)
+    {
+      printf("Congrats! You win!\n");
+      return 1;
+    }
+    
+  }
+  if (board[1] == 1 && board[4] == 1 && board[7] == 1)
+  {
+    printf("Congrats! You win!\n");
+    return 1;
+  }
+  if (board[2] == 1)
+  {
+    if(board[5] == 1 && board[8] == 1)
+    {
+      printf("Congrats! You win!\n");
+      return 1;
+    }
+    if(board[4] == 1 && board[6] == 1)
+    {
+      printf("Congrats! You win!\n");
+      return 1;
+    }
+  }
+  if (board[3] == 1 && board[4] == 1 && board[5] == 1)
+  {
+    printf("Congrats! You win!\n");
+    return 1;
+  }
+  if (board[6] == 1 && board[7] == 1 && board[8] == 1)
+  {
+    printf("Congrats! You win!\n");
+    return 1;
+  }
+  //computer wins
+  if( board[0] == 2)
+  {
+    if (board[1] == 2)
+    {
+      if (board[2] == 2)
+      {
+        printf("Sorry, you lose.\n");
+        return 1;
+      }
+    }
+    if (board[3] == 2)
+    {
+      if (board[6] == 2)
+      {
+        printf("Sorry, you lose.\n");
+        return 1;
+      }
+    }
+    if (board[4] == 2 && board[8] == 2)
+    {
+      printf("Sorry, you lose.\n");
+      return 1;
+    }
+    
+  }
+  if (board[1] == 2 && board[4] == 2 && board[7] == 2)
+  {
+    printf("Sorry, you lose.\n");
+    return 1;
+  }
+  if (board[2] == 2)
+  {
+    if(board[5] == 2 && board[8] == 2)
+    {
+      printf("Sorry, you lose.\n");
+      return 1;
+    }
+    if(board[4] == 2 && board[6] == 2)
+    {
+      printf("Sorry, you lose.\n");
+      return 1;
+    }
+  }
+  if (board[3] == 2 && board[4] == 2 && board[5] == 2)
+  {
+    printf("Sorry, you lose.\n");
+    return 1;
+  }
+  if (board[6] == 2 && board[7] == 2 && board[8] == 2)
+  {
+    printf("Sorry, you lose.\n");
+    return 1;
+  }
+  return 0;
+}*/
+
+/*
+Tic Tac Toe!
+  print board
+  user input for where to go, user goes first and is X's
+    ensure user doesn't go in a filled spot
+    print out users X
+  comp goes randomly(for now, later make some logic)
+    print out comps O
+  repeat til tie or win or lose
+  prompt to play again
+*/
+
