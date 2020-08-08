@@ -1,16 +1,18 @@
 #include <stdio.h>
 
-int *printBoard(int spot[]);
+void printBoard(int spot[]);
 
 int main(void)
 {
+  char input;
   int spot[2] = {1,1};
-  for (int i = 0; i < 10000; i++)
+  for (int i = 0; i < 1000; i++)
   {
     printBoard(spot);
+    scanf(" %c", &input);
   }
 }
-int *printBoard(int spot[])
+void printBoard(int spot[])
 {
   int bWidth = 35;
   int bHeight = 25;
