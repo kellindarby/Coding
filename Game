@@ -1,0 +1,61 @@
+#include <stdio.h>
+
+int *printBoard(int spot[]);
+
+int main(void)
+{
+  int spot[2] = {1,1};
+  for (int i = 0; i < 10000; i++)
+  {
+    printBoard(spot);
+  }
+}
+int *printBoard(int spot[])
+{
+  int bWidth = 35;
+  int bHeight = 25;
+
+  for (int i = 0; i <= bHeight; i++)
+  {
+    if(i == 0 || i == bHeight)
+    {
+      for(int j = 0; j <= bWidth; j++)
+      {
+        printf("-");
+      }
+    }
+    else
+    {
+      for(int j = 0; j<=bWidth; j++)
+      {
+        if(j == 0 || j  == bWidth)
+        {
+          printf("|");
+        }
+        else
+        {
+          if(i == spot[0] && j == spot[1])
+          {
+            printf("*");
+          }
+          else
+          {
+            printf(" ");
+          }
+        }
+      }
+    }
+    printf("\n");
+  }
+  spot[1]++;
+  if(spot[1] == bWidth)
+  {
+    spot[1] = 1;
+    spot[0]++;
+  }
+  if(spot[0] == bHeight)
+  {
+    spot[0] = 1;
+  }
+  printf("%d & %d\n", spot[0], spot[1]);
+}
