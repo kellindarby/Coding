@@ -1,0 +1,109 @@
+//attempting to make character moveable, but using this weird input checker throws off the print board,
+//seems like every entry causes a newline and a tab or something
+
+#include<stdio.h>
+#include<stdlib.h>
+
+void printBoard(int spot[]);
+
+int main(void){
+  int c;
+  int spot[2] = {1,1};
+  /* use system call to make terminal send all keystrokes directly to stdin */
+  while(1)
+  {
+    system ("/bin/stty raw");
+    while((c=getchar())!= '.') {
+      /* type a period to break out of the loop, since CTRL-D won't work raw */
+      if(c == 'w')
+      {
+        spot[0]--;
+      }
+      else if (c == 's')
+      {
+        spot[0]++;
+      }
+      else if( c == 'd')
+      {
+        spot[1]++;
+      }
+      else if( c == 'a')
+      {
+        spot[1]--;
+      }
+    }
+    /* use system call to set terminal behaviour to more normal behaviour */
+    system ("/bin/stty cooked");
+    printf("\n");
+    printBoard(spot);
+  }
+  return 0;
+}
+
+
+void printBoard(int spot[])
+{
+
+  int bWidth = 35;
+  int bHeight = 25;
+  if(spot[0] <= 0)
+  {
+    spot[0] = bHeight-1;
+  }
+  if (spot[0] == bHeight)
+  {
+    spot[0] = 1;
+  }
+  if(spot[1] <= 0)
+  {
+    spot[1] = bWidth-1;
+  }
+  if (spot[1] == bWidth)
+  {
+    spot[1] = 1;
+  }
+  for (int i = 0; i <= bHeight; i++)
+  {
+    if(i == 0 || i == bHeight)
+    {
+      for(int j = 0; j <= bWidth; j++)
+      {
+        printf("-");
+      }
+    }
+    else
+    {
+      for(int j = 0; j<=bWidth; j++)
+      {
+        if(j == 0 || j  == bWidth)
+        {
+          printf("|");
+        }
+        else
+        {
+          if(i == spot[0] && j == spot[1])
+          {
+            printf("*");
+          }
+          else
+          {
+            printf(" ");
+          }
+        }
+      }
+    }
+    printf("\n");
+  }
+  // loop below just makes asterisk keep moving left to right, top to bottom
+  /*spot[1]++;
+  if(spot[1] == bWidth)
+  {
+    spot[1] = 1;
+    spot[0]++;
+  }
+  if(spot[0] == bHeight)
+  {
+    spot[0] = 1;
+  }
+  printf("%d & %d\n", spot[0], spot[1]);*/
+}
