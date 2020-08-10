@@ -1,9 +1,9 @@
 //Works online on linux systems, needs the stty file/thingy
 //Setting a high score works, game only currently ends on high score.
 //How to die? Thinking moving obstacles, and maybe more items.
-//Health? Items like D for defense, take less dmg. H health pack
-//O stays points, new levels at some point, can't go thru walls maybe
-// bullets?
+//Health? Items like D for defense, take less dmg like 2 hits to kill. 
+//H health pack O stays points, new levels at some point, can't go 
+//thru walls. Maybe can shoot bullets at some point, or with items
 
 
 #include<stdio.h>
@@ -54,7 +54,31 @@ int main(void){
     printf("\n");
     int hiScore = checkScore();
 
-    printf("SCORE: %d\nHIGHSCORE: %d\n", score, hiScore);
+    printf("SCORE: %d", score);
+
+    //right aligning hiScore
+    int hiScoreLeng = 0;
+    int temp = hiScore;
+    for (int i = 0; temp > 0; i++)
+    {
+      temp/=10;
+      hiScoreLeng++;
+    }
+    int scoreLeng = 0;
+    temp = score;
+    for (; temp > 0; scoreLeng++)
+    {
+      temp/=10;
+    }
+    int startSpaces = 6+scoreLeng;//should be total characters from leftside
+
+    //loop for spaces b/w end of score and start of hiScore
+    for(int i = 1; startSpaces+i < (bWidth-hiScoreLeng-11); i++)
+    {
+      printf(" ");
+    }
+    printf("HIGHSCORE: %d\n", hiScore);
+
     score = printBoard(spot,itemSpot,score,bWidth,bHeight);
     if (score == hiScore+100)
     {
@@ -164,8 +188,12 @@ int checkScore()
 {
   FILE *ptr;
   ptr = fopen("hiScore.txt", "r");
-  
   int hiScore = 0;
+  if( ptr == NULL)
+  {
+    return hiScore;
+  }
+
   fscanf(ptr, "%d", &hiScore);
   fclose(ptr);
   return hiScore;
