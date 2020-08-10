@@ -25,7 +25,10 @@ struct user{
   int enemyDeathCount;
   int chance;
   int weapon;
-  long round;
+  long round;//not sure i'llneed this
+  int gravity;//for future planned levels needing to jump
+  int lives;
+  int liveScore;
 };
 
 struct user bomb(struct user player);
@@ -41,7 +44,7 @@ int main(void){
   
   struct user player;
   player.score = 0;
-  player.health = 2;
+  player.health = 1;
   player.spot[0] = 1;
   player.spot[1] = 1;
   player.bWidth = 55;
@@ -55,6 +58,9 @@ int main(void){
   player.weapon = 1;
   player.enemyDeathCount = 10;
   player.round = 0;
+  player.gravity = 0;
+  player.lives = 2;
+  player.liveScore = 0;
 
   while(player.enemySpot[0] + player.enemySpot[1] < (player.spot[0]+player.spot[1] + 8))
   {
@@ -71,6 +77,7 @@ int main(void){
   }
   
   int c;
+  int hiScore = checkScore();
   /*int bWidth = 55;
   int bHeight = 35;
   int spot[2] = {1,1};
@@ -111,15 +118,24 @@ int main(void){
       }
       else if( c == 'q' )
       {
-        printf("uitting Time\n\n");
+        printf("uitting time\n\n\r");
+        if (player.score> hiScore)
+        {
+          updateHiScore(player.score);
+        }
         return 0;
       }
-    }while(c!= '.' && c!= 'w' && c!= 's' && c != 'd' && c!= 'a' && c!= 'b' && c!='q');
+      else if( c == ' ' )
+      {
+        player.spot[0]-=2;
+        player.gravity = 1;
+      }
+    }while(c!= '.' && c!= 'w' && c!= 's' && c != 'd' && c!= 'a' && c!= 'b' && c!='q' && c!= 'z' && c!= 'e' && c!= 'r' && c != 'x' && c!= 'c' && c!= 'f' && c!='t' && c!= ' ');
 
     /* use system call to set terminal behaviour to more normal behaviour */
     system ("/bin/stty cooked");
     printf("\n");
-    int hiScore = checkScore();
+
 
     printf("SCORE: %d", player.score);
 
@@ -144,27 +160,24 @@ int main(void){
     {
       printf(" ");
     }
-    printf("HIGHSCORE: %d\nHEALTH: %d\tWEAPON: %d\n", hiScore,player.health,player.weapon);
+    printf("HIGHSCORE: %d\nHEALTH: %d\tWEAPON: %d LIVES: %d\n", hiScore,player.health,player.weapon,player.lives);
     player = printBoard(player);
-    if (player.score == hiScore + 100)
-    {
-      printf("\n\n\n\nGame Over! You win\n\nNew High Score:");
-      printf(" %d\n", player.score);
-      updateHiScore(player.score);
-      printf("\nEnter key to exit\n");
-      getchar();
-      break;
-    }
     if (player.health == 0)
     {
-      printf("\n\n\n\nYou have died\n");
-      if(player.score > hiScore)
+      player.lives--;
+      player.health = 1;
+      if (player.lives == 0)
       {
-        updateHiScore(player.score);
+        if(player.score > hiScore)
+        {
+          updateHiScore(player.score);
+        }
+        printf("\n\n\nGame Over!\n\n");
+        return 0;
       }
-      break;
     }
   printf("Player luck: %d EnemyLife: %c EnemyDeathCount: %d Round: %ld\n", player.chance, player.enemyLife, player.enemyDeathCount, player.round);
+  printf("LiveScore: %d\n", player.liveScore);
   }
 
   return 0;
@@ -413,6 +426,11 @@ struct user printBoard(struct user player)
   if(player.enemyDeathCount == 10)
   {
     player.enemyLife = 'A';
+  }
+  if(player.score == 1000+(player.liveScore))
+  {
+    player.lives++;
+    player.liveScore+= 1000;
   }
   player.round++;
   return player;
