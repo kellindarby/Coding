@@ -1,6 +1,10 @@
 //Works online on linux systems, needs the stty file/thingy
-//doesn't currently update high score, because there is no end state in game
-//how to die? when to win? The world may never know
+//Setting a high score works, game only currently ends on high score.
+//How to die? Thinking moving obstacles, and maybe more items.
+//Health? Items like D for defense, take less dmg. H health pack
+//O stays points, new levels at some point, can't go thru walls maybe
+// bullets?
+
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -8,6 +12,7 @@
 
 int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight);
 int checkScore();
+void updateHiScore(int score);
 
 int main(void){
   srand(time(0));
@@ -54,6 +59,13 @@ int main(void){
     if (score == hiScore+100)
     {
       printf("NEW HIGH SCORE!!!\n\n");
+    }
+    if (score == hiScore + 100)
+    {
+      printf("Game Over! You win\n\nNew High Score:");
+      printf(" %d\n", score);
+      updateHiScore(score);
+      break;
     }
   }
 
@@ -157,4 +169,13 @@ int checkScore()
   fscanf(ptr, "%d", &hiScore);
   fclose(ptr);
   return hiScore;
+}
+
+void updateHiScore(int score)
+{
+  FILE *ptr; 
+  ptr = fopen("hiScore.txt", "w");
+  fprintf(ptr, "%d", score);
+
+  fclose(ptr);
 }
