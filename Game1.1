@@ -1,16 +1,22 @@
-//attempting to make character moveable, but using this weird input checker throws off the print board,
-//seems like every entry causes a newline and a tab or something
+//Works online on linux systems, needs the stty file/thingy
+///scoredoesn't work yet, stays 0. Haven't randomized itemSpot mvmnt
 
 #include<stdio.h>
 #include<stdlib.h>
+#include<time.h>
 
-void printBoard(int spot[]);
+int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight);
 
 int main(void){
+  srand(time(0));
   int c;
+  int bWidth = 35;
+  int bHeight = 25;
   int spot[2] = {1,1};
+  int itemSpot[] = {bHeight/2, bWidth/2};
+  int score = 0;
   /* use system call to make terminal send all keystrokes directly to stdin */
-  printBoard(spot);
+  printBoard(spot,itemSpot,score,bWidth,bHeight);
   while(1)
   {
     system ("/bin/stty raw");
@@ -39,18 +45,17 @@ int main(void){
     /* use system call to set terminal behaviour to more normal behaviour */
     system ("/bin/stty cooked");
     printf("\n");
-    printBoard(spot);
+    printf("SCORE: %d\n", score*100);
+    printBoard(spot,itemSpot,score,bWidth,bHeight);
   }
 
   return 0;
 }
 
 
-void printBoard(int spot[])
+int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight)
 {
 
-  int bWidth = 35;
-  int bHeight = 25;
   if(spot[0] <= 0)
   {
     spot[0] = bHeight-1;
@@ -86,9 +91,28 @@ void printBoard(int spot[])
         }
         else
         {
+          if(spot[0]==itemSpot[0] && spot[1] == itemSpot[1])
+          {
+            score++;
+            itemSpot[0]+=10;
+            itemSpot[1]+=10;
+            if(itemSpot[0] >= bHeight)
+            {
+              itemSpot[0]-=bHeight;
+            }
+            if(itemSpot[1] >= bWidth)
+            {
+              itemSpot[1]-=bWidth;
+            }
+          }
           if(i == spot[0] && j == spot[1])
           {
             printf("*");
+            continue;
+          }
+          if(i == itemSpot[0] && j == itemSpot[1])
+          {
+            printf("O");
           }
           else
           {
@@ -99,6 +123,7 @@ void printBoard(int spot[])
     }
     printf("\n");
   }
+  return score;
   // loop below just makes asterisk keep moving left to right, top to bottom
   /*spot[1]++;
   if(spot[1] == bWidth)
