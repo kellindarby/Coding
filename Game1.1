@@ -21,9 +21,14 @@ struct user{
   int bWidth;
   int bHeight;
   int enemySpot[2];
+  char enemyLife;
+  int enemyDeathCount;
   int chance;
+  int weapon;
+  long round;
 };
 
+struct user bomb(struct user player);
 struct user printBoard(struct user player);
 int checkScore();
 void updateHiScore(int score);
@@ -46,6 +51,10 @@ int main(void){
   player.itemSpot[0] =(player.bHeight/2);
   player.itemSpot[1] = (player.bWidth/2);
   player.chance = 0;
+  player.enemyLife = 'A';
+  player.weapon = 1;
+  player.enemyDeathCount = 10;
+  player.round = 0;
 
   while(player.enemySpot[0] + player.enemySpot[1] < (player.spot[0]+player.spot[1] + 8))
   {
@@ -94,7 +103,18 @@ int main(void){
       {
         player.spot[1]--;
       }
-    }while(c!= '.' && c!= 'w' && c!= 's' && c != 'd' && c!= 'a');
+      else if( c == 'b' && player.weapon > 0)
+      {
+        player.weapon--;
+        player.enemyDeathCount = 0;
+        player.enemyLife = 'D';
+      }
+      else if( c == 'q' )
+      {
+        printf("uitting Time\n\n");
+        return 0;
+      }
+    }while(c!= '.' && c!= 'w' && c!= 's' && c != 'd' && c!= 'a' && c!= 'b' && c!='q');
 
     /* use system call to set terminal behaviour to more normal behaviour */
     system ("/bin/stty cooked");
@@ -124,8 +144,7 @@ int main(void){
     {
       printf(" ");
     }
-    printf("HIGHSCORE: %d\nHEALTH: %d\n", hiScore,player.health);
-
+    printf("HIGHSCORE: %d\nHEALTH: %d\tWEAPON: %d\n", hiScore,player.health,player.weapon);
     player = printBoard(player);
     if (player.score == hiScore + 100)
     {
@@ -145,7 +164,7 @@ int main(void){
       }
       break;
     }
-  printf("Player luck: %d\n", player.chance);
+  printf("Player luck: %d EnemyLife: %c EnemyDeathCount: %d Round: %ld\n", player.chance, player.enemyLife, player.enemyDeathCount, player.round);
   }
 
   return 0;
@@ -154,7 +173,6 @@ int main(void){
 
 struct user printBoard(struct user player)
 {
-  
   int randSpawn = rand() % (100-player.chance) + 1;//chance for powerup spawn
   if (randSpawn == 1)
   {
@@ -162,107 +180,117 @@ struct user printBoard(struct user player)
     player.powerUpSpot[0] = temp;
     temp = rand() % player.bWidth + 1;
     player.powerUpSpot[1] = temp;
-    temp = rand() % 3 + 1;
+    temp = rand() % 4 + 1;
     switch (temp)
     {
       case 1:
         player.powerType = 'A';
         break;
       case 2:
-        player.powerType = 'G';
+        player.powerType = 'B';
         break;
       case 3:
         player.powerType = 'H';
         break;
+      case 4:
+        player.powerType = 'L';
+        break;
     }
   }
-  int enemyMove = rand() % 9 +1;
-  
-  switch (enemyMove)
+  if (player.enemyLife != 'D')
   {
-    case 1:
-      player.enemySpot[0]-= 1; 
-      player.enemySpot[1]-= 1;
-      if(player.enemySpot[0] == 0)
-      {
-        player.enemySpot[0] = player.bHeight-1;
-      }
-      if(player.enemySpot[1] == 0)
-      {
-        player.enemySpot[1] = player.bWidth-1;
-      }
-      break;
-    case 2:
-      player.enemySpot[0]-= 1; 
-      if(player.enemySpot[0] == 0)
-      {
-        player.enemySpot[0] = player.bHeight-1;
-      }
-      break;
-    case 3:
-      player.enemySpot[0]-= 1; 
-      player.enemySpot[1]+= 1;
-      if(player.enemySpot[0] == 0)
-      {
-        player.enemySpot[0] = player.bHeight-1;
-      }
-      if(player.enemySpot[1] == player.bWidth)
-      {
-        player.enemySpot[1] = 1;
-      }
-      break;
-    case 4: 
-      player.enemySpot[1]-= 1;
+    int enemyMove = rand() % 9 +1;
+    
+    switch (enemyMove)
+    {
+      case 1:
+        player.enemySpot[0]-= 1; 
+        player.enemySpot[1]-= 1;
+        if(player.enemySpot[0] == 0)
+        {
+          player.enemySpot[0] = player.bHeight-1;
+        }
+        if(player.enemySpot[1] == 0)
+        {
+          player.enemySpot[1] = player.bWidth-1;
+        }
+        break;
+      case 2:
+        player.enemySpot[0]-= 1; 
+        if(player.enemySpot[0] == 0)
+        {
+          player.enemySpot[0] = player.bHeight-1;
+        }
+        break;
+      case 3:
+        player.enemySpot[0]-= 1; 
+        player.enemySpot[1]+= 1;
+        if(player.enemySpot[0] == 0)
+        {
+          player.enemySpot[0] = player.bHeight-1;
+        }
+        if(player.enemySpot[1] == player.bWidth)
+        {
+          player.enemySpot[1] = 1;
+        }
+        break;
+      case 4: 
+        player.enemySpot[1]-= 1;
 
-      if(player.enemySpot[1] == 0)
-      {
-        player.enemySpot[1] = player.bWidth-1;
-      }
-      break;
-    case 5:
-      break;
-    case 6: 
-      player.enemySpot[1]+= 1;
-      if(player.enemySpot[1] == player.bWidth)
-      {
-        player.enemySpot[1] = player.bWidth-1;
-      }
-      break;
-    case 7:
-      player.enemySpot[0]+= 1; 
-      player.enemySpot[1]-= 1;
-      if(player.enemySpot[0] == player.bHeight)
-      {
-        player.enemySpot[0] = 1;
-      }
-      if(player.enemySpot[1] == 0)
-      {
-        player.enemySpot[1] = player.bWidth-1;
-      }
-      break;
-    case 8:
-      player.enemySpot[0]+= 1; 
-      if(player.enemySpot[0] == player.bHeight)
-      {
-        player.enemySpot[0] = 1;
-      }
-      break;
-    case 9:
-      player.enemySpot[0]+= 1; 
-      player.enemySpot[1]+= 1;
-      if(player.enemySpot[0] == player.bHeight)
-      {
-        player.enemySpot[0] = 1;
-      }
-      if(player.enemySpot[1] == player.bWidth)
-      {
-        player.enemySpot[1] = 1;
-      }
-      break;
-    default:
-      break;
+        if(player.enemySpot[1] == 0)
+        {
+          player.enemySpot[1] = player.bWidth-1;
+        }
+        break;
+      case 5:
+        break;
+      case 6: 
+        player.enemySpot[1]+= 1;
+        if(player.enemySpot[1] == player.bWidth)
+        {
+          player.enemySpot[1] = player.bWidth-1;
+        }
+        break;
+      case 7:
+        player.enemySpot[0]+= 1; 
+        player.enemySpot[1]-= 1;
+        if(player.enemySpot[0] == player.bHeight)
+        {
+          player.enemySpot[0] = 1;
+        }
+        if(player.enemySpot[1] == 0)
+        {
+          player.enemySpot[1] = player.bWidth-1;
+        }
+        break;
+      case 8:
+        player.enemySpot[0]+= 1; 
+        if(player.enemySpot[0] == player.bHeight)
+        {
+          player.enemySpot[0] = 1;
+        }
+        break;
+      case 9:
+        player.enemySpot[0]+= 1; 
+        player.enemySpot[1]+= 1;
+        if(player.enemySpot[0] == player.bHeight)
+        {
+          player.enemySpot[0] = 1;
+        }
+        if(player.enemySpot[1] == player.bWidth)
+        {
+          player.enemySpot[1] = 1;
+        }
+        break;
+      default:
+        break;
+    }
   }
-
+  if (player.enemyLife == 'D')
+  {
+    player.enemySpot[0] = 0;
+    player.enemySpot[1] = 0;
+  }
   if(player.spot[0] <= 0)
   {
     player.spot[0] = player.bHeight-1;
@@ -322,8 +350,14 @@ struct user printBoard(struct user player)
               case 'A':
                 player.score++;
                 break;
-              case 'G':
-                player.chance++;
+              case 'B':
+                player.weapon++;
+                break;
+              case 'L':
+                if(player.chance < 99)
+                {
+                  player.chance++;
+                }
                 break;
               case 'H':
                 player.health++;
@@ -372,7 +406,15 @@ struct user printBoard(struct user player)
     }
     printf("\n");
   }
-  fflush(stdout);
+  if(player.enemyDeathCount < 10)
+  {
+    player.enemyDeathCount++;
+  }
+  if(player.enemyDeathCount == 10)
+  {
+    player.enemyLife = 'A';
+  }
+  player.round++;
   return player;
   // loop below just makes asterisk keep moving left to right, top to bottom
   /*spot[1]++;
@@ -416,4 +458,14 @@ int dmg(int health)
 {
   health--;
   return health;
+}
+
+struct user bomb(struct user player)
+{
+  if (player.enemyLife == 'A')
+  {
+    player.enemyLife = 'D';
+  }
+
+  return player;
 }
