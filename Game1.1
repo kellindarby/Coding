@@ -89,6 +89,8 @@ int main(void){
       printf("Game Over! You win\n\nNew High Score:");
       printf(" %d\n", score);
       updateHiScore(score);
+      printf("\nEnter key to exit\n");
+      getchar();
       break;
     }
   }
@@ -137,6 +139,7 @@ int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight)
         {
           if(spot[0]==itemSpot[0] && spot[1] == itemSpot[1])
           {
+            printf("\a");
             score+=100;
             int randy = rand() % bWidth +1;
             int randy2 = rand() % bHeight +1;
@@ -153,7 +156,9 @@ int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight)
           }
           if(i == spot[0] && j == spot[1])
           {
+            printf("\033[1;32m");
             printf("*");
+            printf("\033[0m");
             continue;
           }
           if(i == itemSpot[0] && j == itemSpot[1])
