@@ -2,7 +2,7 @@
 //Setting a high score works, game only currently ends on high score.
 //How to die? Thinking moving obstacles, and maybe more items.
 //Health? Items like D for defense, take less dmg like 2 hits to kill. 
-//H health pack O stays points, new levels at some point, can't go 
+//H health pack, O points, G gun?; new levels at some point, can't go 
 //thru walls. Maybe can shoot bullets at some point, or with items
 
 
@@ -16,6 +16,7 @@ struct user{
   int score;
   int spot[2];
   int itemSpot[2];
+  int powerUpSpot[2];
   int bWidth;
   int bHeight;
   int enemySpot[2];
@@ -38,11 +39,24 @@ int main(void){
   player.spot[1] = 1;
   player.bWidth = 55;
   player.bHeight= 35;
-  player.enemySpot[0] = 15;
-  player.enemySpot[1] = 15;
+  player.enemySpot[0] = 0;
+  player.enemySpot[1] = 0;
   player.itemSpot[0] =(player.bHeight/2);
   player.itemSpot[1] = (player.bWidth/2);
 
+  while(player.enemySpot[0] + player.enemySpot[1] < (player.spot[0]+player.spot[1] + 8))
+  {
+    player.enemySpot[0] = rand() % player.bHeight + 1;
+    player.enemySpot[1] = rand() % player.bWidth +1;
+    if(player.enemySpot[0] >= player.bHeight)
+    {
+      player.enemySpot[0] = player.bHeight-1;
+    }
+    if(player.enemySpot[1] >= player.bWidth)
+    {
+      player.enemySpot[1] = player.bWidth-1;
+    }
+  }
   
   int c;
   /*int bWidth = 55;
@@ -110,13 +124,9 @@ int main(void){
     printf("HIGHSCORE: %d\nHEALTH: %d\n", hiScore,player.health);
 
     player = printBoard(player);
-    if(player.score == hiScore + 100)
-    {
-      printf("NEW HIGH SCORE!!!\n\n");
-    }
     if (player.score == hiScore + 100)
     {
-      printf("Game Over! You win\n\nNew High Score:");
+      printf("\n\n\n\nGame Over! You win\n\nNew High Score:");
       printf(" %d\n", player.score);
       updateHiScore(player.score);
       printf("\nEnter key to exit\n");
@@ -125,9 +135,14 @@ int main(void){
     }
     if (player.health == 0)
     {
-      printf("You have died\n");
+      printf("\n\n\n\nYou have died\n");
+      if(player.score > hiScore)
+      {
+        updateHiScore(player.score);
+      }
       break;
     }
+;
   }
 
   return 0;
@@ -136,6 +151,14 @@ int main(void){
 
 struct user printBoard(struct user player)
 {
+  int randSpawn = rand() % 10 + 1;//chance for powerup spawn
+  if (randSpawn == 1)
+  {
+    int temp = rand() % player.bHeight +1;
+    player.powerUpSpot[0] = temp;
+    temp = rand() % player.bWidth + 1;
+    player.powerUpSpot[1] = temp;
+  }
   int enemyMove = rand() % 9 +1;
   
   switch (enemyMove)
@@ -275,6 +298,12 @@ struct user printBoard(struct user player)
               player.itemSpot[1]-=player.bWidth-1;
             }
           }
+          if(player.spot[0] == player.powerUpSpot[0] && player.spot[1] == player.powerUpSpot[1])
+          {
+            player.health++;
+            player.powerUpSpot[0] = 0;
+            player.powerUpSpot[1] = 0;
+          }
           if(player.enemySpot[0]==player.spot[0] && player.enemySpot[1]==player.spot[1])
           {
             player.health = dmg(player.health);
@@ -295,6 +324,13 @@ struct user printBoard(struct user player)
             printf("\33[0m");
             continue;
           }
+          if(i == player.powerUpSpot[0] && j == player.powerUpSpot[1])
+          {
+            printf("\033[1;36m");
+            printf("H");
+            printf("\33[0m");
+            continue;
+          }
           if(i == player.itemSpot[0] && j == player.itemSpot[1])
           {
             printf("O");
@@ -308,6 +344,7 @@ struct user printBoard(struct user player)
     }
     printf("\n");
   }
+  fflush(stdout);
   return player;
   // loop below just makes asterisk keep moving left to right, top to bottom
   /*spot[1]++;
@@ -349,6 +386,6 @@ void updateHiScore(int score)
 
 int dmg(int health)
 {
-  health = health -1;
+  health--;
   return health;
 }
