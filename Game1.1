@@ -52,7 +52,7 @@ int main(void){
   player.enemySpot[0] = 0;
   player.enemySpot[1] = 0;
   player.itemSpot[0] =(player.bHeight/2);
-  player.itemSpot[1] = (player.bWidth/2);
+  player.itemSpot[1] =(player.bWidth/2);
   player.chance = 0;
   player.enemyLife = 'A';
   player.weapon = 1;
@@ -186,6 +186,25 @@ int main(void){
 
 struct user printBoard(struct user player)
 {
+
+  //wanna make a loop for multiple enemies
+  /*if( player.change == 1 )
+  {
+    for (int i = 0; i < player.enemySpot[2]; i++)
+    {
+      //first enemy gonna keep his position, others will be randomly based off
+      //his position, but need to not be randomly moved every round
+      int multEnemRandHeight = 0;
+      int multEnemRandWidth = 0;
+      while (multEnemRandWidth == bHeight || multEnemRandWidth == 0 || multEnemRandHeight ==0 || multEnemRandHeight == bHeight)
+      {
+        multEnemRandWidth = rand() % player.bWidth + 1;
+        multEnemRandHeight = rand() % player.bHeight + 1;
+      }
+
+    }
+    change = 0;
+  }*/
   int randSpawn = rand() % (100-player.chance) + 1;//chance for powerup spawn
   if (randSpawn == 1)
   {
@@ -350,6 +369,14 @@ struct user printBoard(struct user player)
             if(player.itemSpot[0] >= player.bHeight)
             {
               player.itemSpot[0]-=player.bHeight-1;
+            }
+            if(player.itemSpot[0] <= 0)
+            {
+              player.itemSpot[0] = 1;
+            }
+            if(player.itemSpot[1] <= 0)
+            {
+              player.itemSpot[1] = 1;
             }
             if(player.itemSpot[1] >= player.bWidth)
             {
