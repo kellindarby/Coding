@@ -1,5 +1,4 @@
 //Works online on linux systems, needs the stty file/thingy
-///scoredoesn't work yet, stays 0. Haven't randomized itemSpot mvmnt
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -46,7 +45,7 @@ int main(void){
     system ("/bin/stty cooked");
     printf("\n");
     printf("SCORE: %d\n", score*100);
-    printBoard(spot,itemSpot,score,bWidth,bHeight);
+    score = printBoard(spot,itemSpot,score,bWidth,bHeight);
   }
 
   return 0;
@@ -94,15 +93,17 @@ int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight)
           if(spot[0]==itemSpot[0] && spot[1] == itemSpot[1])
           {
             score++;
-            itemSpot[0]+=10;
-            itemSpot[1]+=10;
+            int randy = rand() % bWidth +1;
+            int randy2 = rand() % bHeight +1;
+            itemSpot[0]+=randy2;
+            itemSpot[1]+=randy;
             if(itemSpot[0] >= bHeight)
             {
-              itemSpot[0]-=bHeight;
+              itemSpot[0]-=bHeight-1;
             }
             if(itemSpot[1] >= bWidth)
             {
-              itemSpot[1]-=bWidth;
+              itemSpot[1]-=bWidth-1;
             }
           }
           if(i == spot[0] && j == spot[1])
@@ -123,6 +124,8 @@ int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight)
     }
     printf("\n");
   }
+  printf("Loc: %d %d\n", itemSpot[0], itemSpot[1]);
+
   return score;
   // loop below just makes asterisk keep moving left to right, top to bottom
   /*spot[1]++;
