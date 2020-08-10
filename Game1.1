@@ -1,16 +1,19 @@
 //Works online on linux systems, needs the stty file/thingy
+//doesn't currently update high score, because there is no end state in game
+//how to die? when to win? The world may never know
 
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
 
 int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight);
+int checkScore();
 
 int main(void){
   srand(time(0));
   int c;
-  int bWidth = 35;
-  int bHeight = 25;
+  int bWidth = 55;
+  int bHeight = 35;
   int spot[2] = {1,1};
   int itemSpot[] = {bHeight/2, bWidth/2};
   int score = 0;
@@ -44,8 +47,14 @@ int main(void){
     /* use system call to set terminal behaviour to more normal behaviour */
     system ("/bin/stty cooked");
     printf("\n");
-    printf("SCORE: %d\n", score*100);
+    int hiScore = checkScore();
+
+    printf("SCORE: %d\nHIGHSCORE: %d\n", score, hiScore);
     score = printBoard(spot,itemSpot,score,bWidth,bHeight);
+    if (score == hiScore+100)
+    {
+      printf("NEW HIGH SCORE!!!\n\n");
+    }
   }
 
   return 0;
@@ -92,7 +101,7 @@ int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight)
         {
           if(spot[0]==itemSpot[0] && spot[1] == itemSpot[1])
           {
-            score++;
+            score+=100;
             int randy = rand() % bWidth +1;
             int randy2 = rand() % bHeight +1;
             itemSpot[0]+=randy2;
@@ -124,8 +133,6 @@ int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight)
     }
     printf("\n");
   }
-  printf("Loc: %d %d\n", itemSpot[0], itemSpot[1]);
-
   return score;
   // loop below just makes asterisk keep moving left to right, top to bottom
   /*spot[1]++;
@@ -139,4 +146,15 @@ int printBoard(int spot[], int itemSpot[], int score, int bWidth, int bHeight)
     spot[0] = 1;
   }
   printf("%d & %d\n", spot[0], spot[1]);*/
+}
+
+int checkScore()
+{
+  FILE *ptr;
+  ptr = fopen("hiScore.txt", "r");
+  
+  int hiScore = 0;
+  fscanf(ptr, "%d", &hiScore);
+  fclose(ptr);
+  return hiScore;
 }
