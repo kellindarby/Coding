@@ -1,0 +1,93 @@
+#include <stdio.h>
+
+int main(int argc, char *argv[]) {
+  char input[255];
+  printf("Input to be encrypted: ");
+  fgets(input, 255, stdin);
+  printf("Input cipher key: ");
+  char cipher[26];
+  fgets(cipher, 26, stdin);
+  int cipherLeng = -1;
+
+  for (int i = 0; cipher[i] != '\0'; i++,cipherLeng++)
+  {
+  }
+
+  char finalCiph[cipherLeng];//to hold cipher after duplicates removed
+
+  int counts = 0;
+  //want this loop to remove any duplicates in cipher
+  //gonna loop thru cipher and store first letter in final, then check if next letter
+  //is in final, then 
+  for(int i = 0; i < cipherLeng; i++)
+  {
+    for(int j = 0; j <= i; j++)
+    {
+      if(cipher[i] == finalCiph[j])
+      {
+        break;
+      }
+      else if(j == i)
+      {
+        finalCiph[counts] = cipher[i];
+        counts++;
+      }
+    }
+  }
+  finalCiph[counts] = '\0';
+  char base[] = "abcdefghijklmnopqrstuvwxyz";
+
+  int count = 0;//to determine spot after end of cipher to add letters
+  for(int i = 0; i < 26; i++)//loop thru alphabet
+  {
+    for (int j = 0; j < counts; j++)//iterate thru cipher key
+    {
+      if(base[i] == finalCiph[j])//if letter is already in cipher, skip
+      {
+        break;
+      }
+      if (j == (counts-1))//if letter isn't in cipher key, append to end
+      {
+        //printf("Count: %d base[%d]: %c",count,i,base[i]);
+        finalCiph[counts+count] = base[i];
+        //printf(" finalCiph[%d + %d]: %c\n",counts,count,finalCiph[counts+count]);
+        count++;
+      }
+    }
+  }
+  finalCiph[counts+count] = '\0';
+  printf("FinalChecker: %s\n", finalCiph);
+  int inputLeng = 0;
+  for (int i = 0; input[i] != '\0'; i++,inputLeng++)
+  {
+  }
+  char output[inputLeng];
+  for (int i = 0; i < inputLeng;i++)
+  {
+    if(input[i] >='A' && input[i] <= 'Z')//A= 65, Z=90, a = 97, z = 122
+    {
+      for(int j = 0; j < 26; j++)
+      {
+        if (input[i] + ('a'-'A') == base[j])
+        {
+          output[i] = (finalCiph[j]-('a'-'A'));
+        }
+      }
+    }
+    if(input[i] >= 'a' && input[i] <= 'z')
+    {
+      for (int j = 0; j < 26; j++)
+      {
+        if(input[i] == base[j])
+        {
+          output[i] = finalCiph[j];
+        }
+      }
+    }
+    else if(input[i] <'A' || (input[i] > 'Z' && input[i] < 'a') || input[i] > 'z')
+    {
+      output[i] = input[i];
+    }
+  }
+  printf("Final: %s\n", output);
+}
